@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const characters = {
-  S: Array.from({ length: 34 }, (_, i) => ({ id: `S${i + 1}`, name: `S급 캐릭터 ${i + 1}`, rarity: 'S' })),
-  A: Array.from({ length: 44 }, (_, i) => ({ id: `A${i + 1}`, name: `A급 캐릭터 ${i + 1}`, rarity: 'A' })),
-  B: Array.from({ length: 14 }, (_, i) => ({ id: `B${i + 1}`, name: `B급 캐릭터 ${i + 1}`, rarity: 'B' })),
-};
-
-const featuredCharacter = { ...characters.S[0], name: "픽업 S급 캐릭터" };
+import characters from '../assets/characters.json';
 
 const GachaSystem = () => {
   const [results, setResults] = useState([]);
@@ -15,8 +7,17 @@ const GachaSystem = () => {
   const [pullCount, setPullCount] = useState(0);
   const [pityCount, setPityCount] = useState(0);
   const [guaranteedSCount, setGuaranteedSCount] = useState(0);
-  const [revealIndex, setRevealIndex] = useState(-1);
   const [guaranteedFeatured, setGuaranteedFeatured] = useState(false);
+  const [featuredCharacter, setFeaturedCharacter] = useState(null);
+
+  useEffect(() => {
+    console.log('Loaded characters:', characters);
+    if (!characters || !characters.S || !characters.A || !characters.B) {
+      console.error('캐릭터 데이터가 올바르지 않습니다.');
+    }
+    // 예시로 S급 첫 번째 캐릭터를 픽업 캐릭터로 설정
+    setFeaturedCharacter(characters.S[0]);
+  }, []);
 
   const getCharacter = (isPity = false, isGuaranteed = false) => {
     let rand = Math.random() * 100;
@@ -37,7 +38,7 @@ const GachaSystem = () => {
     if (rarity === 'S') {
       if (guaranteedFeatured || Math.random() < 0.5) {
         setGuaranteedFeatured(false);
-        return featuredCharacter;
+        return featuredCharacter || characters.S[Math.floor(Math.random() * characters.S.length)];
       } else {
         setGuaranteedFeatured(true);
         return characters.S[Math.floor(Math.random() * characters.S.length)];
@@ -49,7 +50,6 @@ const GachaSystem = () => {
 
   const pullGacha = () => {
     setIsSpinning(true);
-    setRevealIndex(-1);
     const newCharacters = [];
     let localPityCount = pityCount;
     let localGuaranteedSCount = guaranteedSCount;
@@ -74,23 +74,7 @@ const GachaSystem = () => {
     setPullCount(prev => prev + 10);
     setPityCount(localPityCount);
     setGuaranteedSCount(localGuaranteedSCount);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-      revealCharacters();
-    }, 2000);
-  };
-
-  const revealCharacters = () => {
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < 10) {
-        setRevealIndex(index);
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 500);
+    setIsSpinning(false);
   };
 
   return (
@@ -100,46 +84,31 @@ const GachaSystem = () => {
         <p>총 뽑기 횟수: {pullCount}</p>
         <p>현재 Pity: {pityCount}/80</p>
         <p>다음 S급 보장: {guaranteedFeatured ? '픽업' : '비픽업'}</p>
+        {featuredCharacter && <p>픽업 캐릭터: {featuredCharacter.name}</p>}
       </div>
-      <motion.button
-        className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <button
+        className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600"
         onClick={pullGacha}
         disabled={isSpinning}
       >
         10연차 뽑기
-      </motion.button>
-      {isSpinning ? (
-        <motion.div
-          className="mt-8 text-xl"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        >
-          🎰
-        </motion.div>
-      ) : (
-        <div className="mt-8 grid grid-cols-5 gap-4">
-          <AnimatePresence>
-            {results.map((result, index) => (
-              index <= revealIndex && (
-                <motion.div
-                  key={index}
-                  className="p-4 bg-white rounded-lg shadow-md text-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <h2 className="text-lg font-semibold">{result.name}</h2>
-                  <p className={`text-md ${result.rarity === 'S' ? 'text-yellow-500' : result.rarity === 'A' ? 'text-blue-500' : 'text-green-500'}`}>
-                    {result.rarity}급
-                  </p>
-                </motion.div>
-              )
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
+      </button>
+      <div className="mt-8 grid grid-cols-5 gap-4">
+        {results.map((result, index) => (
+          <div
+            key={index}
+            className="p-4 bg-white rounded-lg shadow-md text-center"
+          >
+            <h2 className="text-lg font-semibold">{result.name}</h2>
+            <p className={`text-md ${
+              result.rarity === 'S' ? 'text-yellow-500' : 
+              result.rarity === 'A' ? 'text-blue-500' : 'text-green-500'
+            }`}>
+              {result.rarity}급
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
