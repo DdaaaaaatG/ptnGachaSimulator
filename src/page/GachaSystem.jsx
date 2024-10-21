@@ -16,7 +16,7 @@ const GachaSystem = () => {
       console.error('캐릭터 데이터가 올바르지 않습니다.');
     }
     // 예시로 S급 첫 번째 캐릭터를 픽업 캐릭터로 설정
-    setFeaturedCharacter(characters.S[0]);
+    setFeaturedCharacter(characters.S[38]);
   }, []);
 
   const getCharacter = (isPity = false, isGuaranteed = false) => {
