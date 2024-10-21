@@ -37,7 +37,8 @@
     { "id": "S35", "name": "코쿠리코", "rarity": "S" },
     { "id": "S36", "name": "이브", "rarity": "S" },
     { "id": "S37", "name": "두약", "rarity": "S" },
-    { "id": "S38", "name": "L.L.", "rarity": "S" }
+    { "id": "S38", "name": "L.L.", "rarity": "S" },
+    { "id": "S39", "name": "000", "rarity": "S" }
   ],
   "A" : [
     { "id": "A1", "name": "돌리", "rarity": "A" },
