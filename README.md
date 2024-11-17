@@ -26,3 +26,11 @@ S급 2% A급 18% B급 80%
 50% 확률로 1번째 S에 픽업캐 =평균 35.2뽑, 50% 확률로 2번째 S에 픽업캐 =평균 70.4뽑
 
 더하고 나누면 52.8
+
+다음 픽업대상자들
+
+    { "id": "S145", "name": "보르트 블루", "rarity": "S","tendency": "arcane", "limited": false  }
+    { "id": "A114", "name": "도브", "rarity": "A" ,"tendency": "endura" , "limited": false}
+
+    { "id": "S022", "name": "필기아", "rarity": "S","tendency": "fury"  , "limited": false}
+    { "id": "A747", "name": "제피르", "rarity": "A" ,"tendency": "catalyst" , "limited": false}

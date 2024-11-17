@@ -12,9 +12,11 @@ export default {
       },
       inset: { 
         '3b': '-28px',
+        '3b2': '34.01px',
         'custom': '17px',
         'custom2': '89px',
         '5l': '-18px',
+        '16l': '23px',
         'leftcustom': '12px',
         'leftcustom2': '66px',
         'leftcustom3': '12px',

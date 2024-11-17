@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import characters from '../assets/characters.json';
+import ImgFrame from './Character/ImgFrame';
 
 const GachaSystem = () => {
   const [results, setResults] = useState([]);
@@ -9,22 +10,33 @@ const GachaSystem = () => {
   const [guaranteedSCount, setGuaranteedSCount] = useState(0);
   const [guaranteedFeatured, setGuaranteedFeatured] = useState(false);
   const [featuredCharacter, setFeaturedCharacter] = useState(null);
-
+  const [isLimitedEvent, setIsLimitedEvent] = useState(true);
+  
   useEffect(() => {
     console.log('Loaded characters:', characters);
     if (!characters || !characters.S || !characters.A || !characters.B) {
       console.error('캐릭터 데이터가 올바르지 않습니다.');
     }
-    // 예시로 S급 첫 번째 캐릭터를 픽업 캐릭터로 설정
-    setFeaturedCharacter(characters.S[38]);
-  }, []);
+    
+    const targetCharacter = characters.S[23]; //  캐릭터 선택
+    if (!targetCharacter.limited || isLimitedEvent) {
+      setFeaturedCharacter(targetCharacter);
+    }
+  }, [isLimitedEvent]);
+
+  const getNormalSPool = () => {
+    // 한정 이벤트 중일 때는 픽업 캐릭터도 풀에 포함
+    return characters.S.filter(char => 
+      !char.limited || (isLimitedEvent && char.id === featuredCharacter?.id)
+    );
+  };
 
   const getCharacter = (isPity = false, isGuaranteed = false) => {
     let rand = Math.random() * 100;
     let rarity;
 
     if (isPity) {
-      rand = Math.random() * 20;  // A급 또는 S급만 뽑기
+      rand = Math.random() * 20;
     }
 
     if (isGuaranteed || pityCount >= 79 || (isPity && rand < 2.84) || (!isPity && rand < 2)) {
@@ -38,10 +50,11 @@ const GachaSystem = () => {
     if (rarity === 'S') {
       if (guaranteedFeatured || Math.random() < 0.5) {
         setGuaranteedFeatured(false);
-        return featuredCharacter || characters.S[Math.floor(Math.random() * characters.S.length)];
+        return featuredCharacter;
       } else {
         setGuaranteedFeatured(true);
-        return characters.S[Math.floor(Math.random() * characters.S.length)];
+        const normalSPool = getNormalSPool();
+        return normalSPool[Math.floor(Math.random() * normalSPool.length)];
       }
     } else {
       return characters[rarity][Math.floor(Math.random() * characters[rarity].length)];
@@ -93,20 +106,14 @@ const GachaSystem = () => {
       >
         10연차 뽑기
       </button>
+      
+      {/* 결과 표시 부분을 ImgFrame을 사용하도록 수정 */}
       <div className="mt-8 grid grid-cols-5 gap-4">
-        {results.map((result, index) => (
-          <div
-            key={index}
-            className="p-4 bg-white rounded-lg shadow-md text-center"
-          >
-            <h2 className="text-lg font-semibold">{result.name}</h2>
-            <p className={`text-md ${
-              result.rarity === 'S' ? 'text-yellow-500' : 
-              result.rarity === 'A' ? 'text-blue-500' : 'text-green-500'
-            }`}>
-              {result.rarity}급
-            </p>
-          </div>
+        {results.map((character, index) => (
+          <ImgFrame 
+            key={index} 
+            character={character}  // character 객체를 props로 전달
+          />
         ))}
       </div>
     </div>
