@@ -29,7 +29,7 @@ const ImgFrame = ({ character }) => {
     }
   };
 
-  const characterImagePath = `/src/assets/sinners/${character.id}-base.png`;
+  const characterImagePath = `/sinners/${character.id}-base.png`;
 
   // 캐릭터 이미지 경로 생성
   const getCharacterImage = (id) => {
